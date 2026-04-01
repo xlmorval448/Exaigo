@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from django.urls import reverse_lazy
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -55,11 +55,16 @@ class RankingViewSet(viewsets.ModelViewSet):
 
 # APP
 
+class InicioView(LoginRequiredMixin, ListView):
+    template_name = 'app/inicio.html'
+    model = Viaje
+    context_object_name = "viajes"
+
 class UsuarioCreateView(CreateView):
     template_name = 'app/usuario_crear.html'
     model = Usuario
     form_class = UsuarioForm
-    success_url = reverse_lazy('inicio')
+    success_url = reverse_lazy('login')
 
     def form_valid(self, form):
         messages.success(self.request, "Usuario Creado Correctamente.")

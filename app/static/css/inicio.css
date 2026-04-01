@@ -1,0 +1,49 @@
+.navbar-logo {
+    height: 35px;
+    width: auto;
+    object-fit: contain;
+}
+
+.header-profile-pic {
+    width: 42px;
+    height: 42px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+}
+
+.dropdown-toggle-hidden::after {
+    display: none !important;
+}
+
+.w-20px {
+    width: 20px;
+}
+
+.viaje-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-radius: 12px;
+}
+
+.viaje-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.conductor-pic {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+}
+
+.route-container {
+    padding-left: 1.5rem;
+}
+
+.dropdown-item form button {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    text-align: left;
+}

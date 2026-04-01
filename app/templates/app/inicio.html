@@ -1,0 +1,125 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/inicio.css' %}">
+{% endblock %}
+
+{% block header %}
+<nav class="navbar navbar-expand navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
+            <img src="{% static 'img/ExaigoLogo.png' %}" alt="Logo Exaigo" class="navbar-logo me-2">
+            <span class="fw-bold tracking-wide">Exaigo</span>
+        </a>
+        
+        <div class="d-flex align-items-center ms-auto">
+            <span class="text-white me-3 fw-semibold d-none d-sm-inline">{{ user.username }}</span>
+            
+            {% if user.fotoPerfil %}
+                <img src="{{ user.fotoPerfil.url }}" alt="Perfil" class="rounded-circle header-profile-pic">
+            {% else %}
+                <div class="rounded-circle header-profile-pic bg-secondary d-flex justify-content-center align-items-center text-white">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            {% endif %}
+            
+            <div class="dropdown ms-2">
+                <a class="text-white text-decoration-none px-2 py-1 dropdown-toggle-hidden" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-ellipsis-vertical fs-5"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                    {% if user.is_staff or user.is_superuser %}
+                    <li>
+                        <a class="dropdown-item fw-semibold" href="/admin/" target="_blank" rel="noopener noreferrer">
+                            <i class="fa-solid fa-shield-halved text-primary me-2 w-20px text-center"></i>Admin
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    {% endif %}
+                    
+                    <li>
+                        <a class="dropdown-item fw-semibold" href="{% url 'usuario_detalle' user.pk %}">
+                            <i class="fa-solid fa-circle-user text-info me-2 w-20px text-center"></i>Cuenta
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <form method="post" action="{% url 'logout' %}" class="m-0 p-0">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item fw-semibold text-danger">
+                                <i class="fa-solid fa-arrow-right-from-bracket me-2 w-20px text-center"></i>Cerrar sesión
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block contenido %}
+<div class="container mt-5 mb-5">
+    <h2 class="mb-4 fw-bold text-dark">Viajes disponibles</h2>
+    
+    <div class="row">
+        {% for viaje in viajes %}
+        <div class="col-12 col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 shadow-sm border-0 viaje-card">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h4 class="card-title text-primary fw-bold mb-0">{{ viaje.precioTotalTrayecto }} €</h4>
+                        <span class="badge rounded-pill {% if viaje.estado == 'DI' %}bg-success{% elif viaje.estado == 'CO' %}bg-warning{% else %}bg-secondary{% endif %}">
+                            {{ viaje.get_estado_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="route-container position-relative ps-3 mb-4 mt-3">
+                        <div class="route-line position-absolute top-0 bottom-0 start-0 border-start border-2 border-primary ms-1 my-2"></div>
+                        <p class="mb-3 position-relative">
+                            <i class="fa-solid fa-circle text-primary position-absolute start-0 translate-middle mt-1 bg-white" style="left: -11px; font-size: 10px;"></i>
+                            <strong class="text-muted d-block small text-uppercase">Origen</strong>
+                            <span class="fw-semibold">{{ viaje.origen }}</span>
+                        </p>
+                        <p class="mb-0 position-relative">
+                            <i class="fa-solid fa-location-dot text-danger position-absolute start-0 translate-middle mt-1 bg-white" style="left: -11px;"></i>
+                            <strong class="text-muted d-block small text-uppercase">Destino</strong>
+                            <span class="fw-semibold">{{ viaje.destino }}</span>
+                        </p>
+                    </div>
+
+                    <div class="d-flex align-items-center text-muted small bg-light p-2 rounded">
+                        <i class="fa-regular fa-calendar-days text-primary me-2"></i>
+                        <span class="fw-semibold">{{ viaje.fechaSalida|date:"d b Y - H:i" }}</span>
+                        <i class="fa-solid fa-road text-primary ms-auto me-2"></i>
+                        <span class="fw-semibold">{{ viaje.distanciaKm }} km</span>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-white border-top-0 p-4 pt-0 d-flex align-items-center">
+                    {% if viaje.conductor.fotoPerfil %}
+                        <img src="{{ viaje.conductor.fotoPerfil.url }}" alt="{{ viaje.conductor.username }}" class="rounded-circle conductor-pic me-3 shadow-sm">
+                    {% else %}
+                        <div class="rounded-circle conductor-pic bg-primary d-flex justify-content-center align-items-center text-white me-3 shadow-sm">
+                            <i class="fa-solid fa-user small"></i>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <span class="d-block small text-muted">Conductor</span>
+                        <span class="fw-bold text-dark">{{ viaje.conductor.username }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-light border border-info border-start-5 border-start-info text-center p-5 rounded-3 shadow-sm">
+                <i class="fa-solid fa-car-side fa-3x text-info mb-3"></i>
+                <h4 class="fw-bold">No hay viajes disponibles</h4>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

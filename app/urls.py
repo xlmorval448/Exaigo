@@ -23,6 +23,7 @@ urlpatterns = [
 # APP
 
 urlpatterns += [
+    path('inicio/', views.InicioView.as_view(), name='inicio'),
     path('usuario/nuevo/', views.UsuarioCreateView.as_view(), name='usuario_crear'),
     path('usuario/<int:pk>/', views.UsuarioDetailView.as_view(), name='usuario_detalle'),
     path('usuario/<int:pk>/editar/', views.UsuarioUpdateView.as_view(), name='usuario_editar'),
