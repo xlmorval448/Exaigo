@@ -133,5 +133,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 AUTH_USER_MODEL = "app.Usuario"
 
-LOGIN_REDIRECT_URL = "/inicio/"
+LOGIN_REDIRECT_URL = "/app/inicio/"
 LOGOUT_REDIRECT_URL = "/accounts/login/"
