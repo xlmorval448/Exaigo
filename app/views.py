@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+from django.urls import reverse_lazy
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import Usuario, Vehiculo, Evento, Viaje, Plaza, Comentario, Ranking
 from .serializers import UsuarioSerializer, VehiculoSerializer, EventoSerializer, ViajeSerializer, PlazaSerializer, ComentarioSerializer, RankingSerializer
+from .forms import UsuarioForm
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 # Create your views here.
 
@@ -47,3 +52,53 @@ class RankingViewSet(viewsets.ModelViewSet):
     queryset = Ranking.objects.all()
     serializer_class = RankingSerializer
     permission_classes = [IsAdminUser]
+
+# APP
+
+class UsuarioCreateView(CreateView):
+    template_name = 'app/usuario_crear.html'
+    model = Usuario
+    form_class = UsuarioForm
+    success_url = reverse_lazy('inicio')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Usuario Creado Correctamente.")
+        return super().form_valid(form)
+
+class UsuarioDetailView(LoginRequiredMixin, DetailView):
+    template_name = 'app/usuario_detalle.html'
+    model = Usuario
+    context_object_name = "usuario"
+
+class UsuarioUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    template_name = 'app/usuario_editar.html'
+    model = Usuario
+    form_class = UsuarioForm
+    success_url = reverse_lazy('usuario_detalle')
+    context_object_name = "usuario"
+
+    def test_func(self):
+        return self.request.user == self.get_object() or self.request.user.is_staff
+
+    def handle_no_permission(self):
+        messages.error(self.request, "No tienes permiso para editar este usuario.")
+        return redirect("usuarios_lista")
+
+    def get_success_url(self):
+        messages.success(self.request, "Cambios Guardados Correctamente.")
+        return super().get_success_url()
+
+class UsuarioDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Usuario
+    success_url = reverse_lazy('logout')
+
+    def test_func(self):
+        return self.request.user == self.get_object()
+
+    def handle_no_permission(self):
+        messages.error(self.request, "No tienes permiso para eliminar este usuario.")
+        return redirect("usuarios_lista")
+
+    def get_success_url(self):
+        messages.success(self.request, "Usuario Eliminado Correctamente.")
+        return super().get_success_url()

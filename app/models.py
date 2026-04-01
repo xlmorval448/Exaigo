@@ -72,7 +72,10 @@ class MesOpcion(models.TextChoices):
     DICIEMBRE = '12', 'Diciembre'
 
 class Usuario(AbstractUser):
-    telefono = models.CharField(max_length=20)
+    telefono = models.CharField(max_length=20, unique=True)
+    nombre = models.CharField(max_length=100, blank=True)
+    apellidos = models.CharField(max_length=100, blank=True)
+    fechaNacimiento = models.DateField(null=True, blank=True)
     dni = models.CharField(max_length=9, unique=True)
     fotoPerfil = models.ImageField(upload_to="perfiles/", null=True, blank=True)
     verificado = models.BooleanField(default=False)

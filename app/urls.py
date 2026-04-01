@@ -4,7 +4,7 @@ from . import views
 from .models import Usuario, Vehiculo, Evento, Viaje, Plaza, Comentario, Ranking
 from .views import UsuarioViewSet, VehiculoViewSet, EventoViewSet, ViajeViewSet, PlazaViewSet, ComentarioViewSet, RankingViewSet
 
-#API
+# API
 
 router = DefaultRouter()
 router.register(r'usuarios', UsuarioViewSet)
@@ -18,4 +18,13 @@ router.register(r'rankings', RankingViewSet)
 urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
+]
+
+# APP
+
+urlpatterns += [
+    path('usuario/nuevo/', views.UsuarioCreateView.as_view(), name='usuario_crear'),
+    path('usuario/<int:pk>/', views.UsuarioDetailView.as_view(), name='usuario_detalle'),
+    path('usuario/<int:pk>/editar/', views.UsuarioUpdateView.as_view(), name='usuario_editar'),
+    path('usuario/<int:pk>/borrar/', views.UsuarioDeleteView.as_view(), name='usuario_borrar'),
 ]
