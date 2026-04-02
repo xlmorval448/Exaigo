@@ -79,7 +79,6 @@ class UsuarioUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'app/usuario_editar.html'
     model = Usuario
     form_class = UsuarioForm
-    success_url = reverse_lazy('usuario_detalle')
     context_object_name = "usuario"
 
     def test_func(self):
@@ -91,7 +90,7 @@ class UsuarioUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def get_success_url(self):
         messages.success(self.request, "Cambios Guardados Correctamente.")
-        return super().get_success_url()
+        return reverse_lazy('usuario_detalle', kwargs={'pk': self.object.pk})
 
 class UsuarioDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Usuario

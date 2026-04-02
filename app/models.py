@@ -85,7 +85,7 @@ class Usuario(AbstractUser):
 
     @property
     def valoracion_media(self):
-        media = self.comentariosRecibidos.aggregate(Avg('estrellas'))['estrellas__avg']
+        media = self.comentariosRecibidos.aggregate(Avg('puntuacion'))['puntuacion__avg']
         return round(media, 1) if media else 0.0
 
     def __str__(self):

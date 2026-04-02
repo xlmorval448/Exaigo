@@ -1,0 +1,125 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/usuario_editar.css' %}">
+{% endblock %}
+
+{% block header %}
+<nav class="navbar navbar-expand navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
+            <img src="{% static 'img/ExaigoLogo.png' %}" alt="Logo Exaigo" class="navbar-logo me-2">
+            <span class="fw-bold tracking-wide">Exaigo</span>
+        </a>
+        <div class="ms-auto">
+            <a href="{% url 'usuario_detalle' usuario.pk %}" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-arrow-left me-1"></i> Volver al perfil
+            </a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-dark py-4 text-center">
+                    <h3 class="text-white fw-bold mb-0">Editar Perfil</h3>
+                    <p class="text-white-50 small mb-0">Actualiza tu información personal</p>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4">
+                            <div class="col-12 text-center mb-4">
+                                <div class="position-relative d-inline-block">
+                                    {% if usuario.fotoPerfil %}
+                                        <img src="{{ usuario.fotoPerfil.url }}" class="rounded-circle edit-profile-preview shadow border border-4 border-light">
+                                    {% else %}
+                                        <div class="rounded-circle edit-profile-preview shadow border border-4 border-light bg-light d-flex align-items-center justify-content-center">
+                                            <i class="fa-solid fa-user fa-3x text-secondary"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="mt-3">
+                                    <label for="{{ form.fotoPerfil.id_for_label }}" class="form-label fw-bold small text-muted">Cambiar foto de perfil</label>
+                                    <input type="file" name="fotoPerfil" id="{{ form.fotoPerfil.id_for_label }}" class="form-control form-control-sm rounded-pill">
+                                </div>
+                            </div>
+
+                            <hr class="text-muted opacity-25">
+
+                            <div class="col-md-6">
+                                <label for="{{ form.username.id_for_label }}" class="form-label fw-bold small text-uppercase text-muted">Nombre de usuario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-at text-primary"></i></span>
+                                    <input type="text" name="username" id="{{ form.username.id_for_label }}" 
+                                           value="{{ form.username.value|default:'' }}" 
+                                           class="form-control border-start-0 custom-input">
+                                </div>
+                                {% if form.username.errors %}
+                                    <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.telefono.id_for_label }}" class="form-label fw-bold small text-uppercase text-muted">Teléfono</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-phone text-primary"></i></span>
+                                    <input type="text" name="telefono" id="{{ form.telefono.id_for_label }}" 
+                                           value="{{ form.telefono.value|default:'' }}" 
+                                           class="form-control border-start-0 custom-input">
+                                </div>
+                                {% if form.telefono.errors %}
+                                    <div class="text-danger small mt-1">{{ form.telefono.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.nombre.id_for_label }}" class="form-label fw-bold small text-uppercase text-muted">Nombre</label>
+                                <input type="text" name="nombre" id="{{ form.nombre.id_for_label }}" 
+                                       value="{{ form.nombre.value|default:'' }}" class="form-control custom-input">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.apellidos.id_for_label }}" class="form-label fw-bold small text-uppercase text-muted">Apellidos</label>
+                                <input type="text" name="apellidos" id="{{ form.apellidos.id_for_label }}" 
+                                       value="{{ form.apellidos.value|default:'' }}" class="form-control custom-input">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.fechaNacimiento.id_for_label }}" class="form-label fw-bold small text-uppercase text-muted">Fecha de Nacimiento</label>
+                                <input type="date" name="fechaNacimiento" id="{{ form.fechaNacimiento.id_for_label }}" 
+                                       value="{{ form.fechaNacimiento.value|date:'Y-m-d' }}" class="form-control custom-input">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.dni.id_for_label }}" class="form-label fw-bold small text-uppercase text-muted">DNI</label>
+                                <input type="text" name="dni" id="{{ form.dni.id_for_label }}" 
+                                       value="{{ form.dni.value|default:'' }}" class="form-control custom-input">
+                                {% if form.dni.errors %}
+                                    <div class="text-danger small mt-1">{{ form.dni.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold py-3 shadow-sm transition-all">
+                                <i class="fa-solid fa-floppy-disk me-2"></i> Guardar Cambios
+                            </button>
+                            <a href="{% url 'usuario_detalle' usuario.pk %}" class="btn btn-link text-muted text-decoration-none fw-bold mt-2">
+                                Cancelar y volver
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/usuario_detalle.css' %}">
+{% endblock %}
+
+{% block header %}
+<nav class="navbar navbar-expand navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
+            <img src="{% static 'img/ExaigoLogo.png' %}" alt="Logo Exaigo" class="navbar-logo me-2">
+            <span class="fw-bold tracking-wide">Exaigo</span>
+        </a>
+        <div class="ms-auto d-flex align-items-center">
+            <a href="{% url 'inicio' %}" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-house me-1"></i> Inicio
+            </a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg overflow-hidden profile-card">
+                <div class="profile-cover bg-primary"></div>
+                
+                <div class="card-body p-4 p-md-5 pt-0">
+                    <div class="text-center profile-header-content">
+                        <div class="position-relative d-inline-block mb-3">
+                            {% if usuario.fotoPerfil %}
+                                <img src="{{ usuario.fotoPerfil.url }}" class="rounded-circle profile-img border border-4 border-white shadow">
+                            {% else %}
+                                <div class="rounded-circle profile-img border border-4 border-white shadow bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fa-solid fa-user fa-4x text-secondary"></i>
+                                </div>
+                            {% endif %}
+                            {% if usuario.verificado %}
+                                <span class="position-absolute bottom-0 end-0 bg-info text-white rounded-circle p-2 border border-3 border-white verified-badge" title="Usuario Verificado">
+                                    <i class="fa-solid fa-check"></i>
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <h2 class="fw-bold mb-1">{{ usuario.nombre }} {{ usuario.apellidos }}</h2>
+                        <p class="text-muted mb-3">@{{ usuario.username }}</p>
+                        
+                        <div class="d-flex justify-content-center gap-2 mb-4">
+                            <span class="badge bg-light text-primary border border-primary rounded-pill px-3 py-2">
+                                <i class="fa-solid fa-star text-warning me-1"></i> {{ usuario.valoracion_media }} / 5
+                            </span>
+                            {% if usuario.esConductor %}
+                                <span class="badge bg-success rounded-pill px-3 py-2">
+                                    <i class="fa-solid fa-car me-1"></i> Conductor
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mt-2">
+                        <div class="col-md-6">
+                            <div class="stat-box p-4 rounded-4 bg-light border-0 h-100">
+                                <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Resumen de Actividad</h5>
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-circle bg-primary-subtle text-primary me-3">
+                                        <i class="fa-solid fa-coins"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Saldo Disponible</small>
+                                        <span class="fw-bold fs-5 text-dark">{{ usuario.saldo }} €</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle bg-warning-subtle text-warning me-3">
+                                        <i class="fa-solid fa-bolt"></i>
+                                    </div>
+                                    <div>
+                                        <small class="text-muted d-block">Puntos de Movilidad</small>
+                                        <span class="fw-bold fs-5 text-dark">{{ usuario.puntosMovilidad }} pts</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="stat-box p-4 rounded-4 bg-light border-0 h-100">
+                                <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Datos Personales</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-3 d-flex align-items-center">
+                                        <i class="fa-solid fa-id-card text-muted me-3 w-20px"></i>
+                                        <span><strong>DNI:</strong> {{ usuario.dni }}</span>
+                                    </li>
+                                    <li class="mb-3 d-flex align-items-center">
+                                        <i class="fa-solid fa-phone text-muted me-3 w-20px"></i>
+                                        <span><strong>Teléfono:</strong> {{ usuario.telefono }}</span>
+                                    </li>
+                                    <li class="d-flex align-items-center">
+                                        <i class="fa-solid fa-calendar-day text-muted me-3 w-20px"></i>
+                                        <span><strong>Nacimiento:</strong> {{ usuario.fechaNacimiento|date:"d/m/Y" }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5 d-flex flex-column flex-sm-row justify-content-center gap-3">
+                        <a href="{% url 'usuario_editar' usuario.pk %}" class="btn btn-primary px-5 py-3 rounded-pill fw-bold shadow-sm">
+                            <i class="fa-solid fa-pen-to-square me-2"></i> Editar Perfil
+                        </a>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger px-5 py-3 rounded-pill fw-bold w-100">
+                                <i class="fa-solid fa-power-off me-2"></i> Cerrar Sesión
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
