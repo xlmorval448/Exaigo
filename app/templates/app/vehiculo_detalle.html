@@ -1,0 +1,118 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/vehiculo_detalle.css' %}">
+{% endblock %}
+
+{% block header %}
+<nav class="navbar navbar-expand navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
+            <img src="{% static 'img/ExaigoLogo.png' %}" alt="Logo Exaigo" class="navbar-logo me-2">
+            <span class="fw-bold tracking-wide">Exaigo</span>
+        </a>
+        <div class="ms-auto">
+            <a href="{% url 'usuario_detalle' user.pk %}" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-arrow-left me-1"></i> Volver al Perfil
+            </a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="vehiculo-header position-relative">
+                    {% if vehiculo.foto %}
+                    <img src="{{ vehiculo.foto.url }}" class="w-100 object-fit-cover" style="height: 300px;">
+                    {% else %}
+                    <div class="bg-light d-flex align-items-center justify-content-center w-100" style="height: 300px;">
+                        <i class="fa-solid fa-car fa-5x text-secondary opacity-25"></i>
+                    </div>
+                    {% endif %}
+                    <div class="position-absolute bottom-0 start-0 p-4 w-100 bg-gradient-dark text-white">
+                        <h2 class="fw-bold mb-0">{{ vehiculo.marca }} {{ vehiculo.modelo }}</h2>
+                        <span class="badge bg-primary fs-6 px-3 mt-2">{{ vehiculo.matricula }}</span>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Especificaciones</h5>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-circle bg-light text-primary me-3">
+                                    <i class="fa-solid fa-palette"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Color</small>
+                                    <span class="fw-bold text-dark">{{ vehiculo.color }}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-circle bg-light text-primary me-3">
+                                    <i class="fa-solid fa-calendar"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Año de matriculación</small>
+                                    <span class="fw-bold text-dark">{{ vehiculo.anio }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5 class="fw-bold text-dark mb-4 border-bottom pb-2">Capacidad y Eficiencia</h5>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-circle bg-light text-success me-3">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Plazas totales</small>
+                                    <span class="fw-bold text-dark">{{ vehiculo.plazasTotales }} asientos</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-circle bg-light text-warning me-3">
+                                    <i class="fa-solid fa-gas-pump"></i>
+                                </div>
+                                <div>
+                                    <small class="text-muted d-block">Consumo Medio</small>
+                                    <span class="fw-bold text-dark">{{ vehiculo.consumoMedio }} L/100km</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-3 mt-5 pt-4 border-top">
+                        <a href="{% url 'usuario_detalle' user.pk %}"
+                            class="btn btn-outline-secondary btn-lg rounded-pill fw-bold shadow-sm">
+                            <i class="fa-solid fa-arrow-left me-2"></i> Volver al Perfil
+                        </a>
+
+                        <button type="button" id="btnEliminarVehiculo"
+                            class="btn btn-outline-danger btn-lg rounded-pill fw-bold shadow-sm">
+                            <i class="fa-solid fa-trash me-2"></i> Eliminar Vehículo
+                        </button>
+
+                        <form id="formEliminar" method="post"
+                            action="{% url 'vehiculo_eliminar' user.pk vehiculo.matricula %}" style="display:none;">
+                            {% csrf_token %}
+                        </form>
+
+                        <small class="text-center text-muted">
+                            Si eliminas este vehículo, dejarás de aparecer como conductor activo.
+                        </small>
+                    </div>
+
+                    {% block js %}
+                    <script src="{% static 'js/vehiculo_detalle.js' %}"></script>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

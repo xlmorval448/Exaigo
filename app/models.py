@@ -93,13 +93,14 @@ class Usuario(AbstractUser):
 
 class Vehiculo(models.Model):
     matricula = models.CharField(max_length=15, primary_key=True)
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="vehiculos")
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name="vehiculo")
     marca = models.CharField(max_length=50)
     modelo = models.CharField(max_length=50)
     color = models.CharField(max_length=30)
     anio = models.PositiveIntegerField()
     consumoMedio = models.FloatField(validators=[MinValueValidator(0.1)])
     plazasTotales = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    foto = models.ImageField(upload_to="vehiculos/", null=True, blank=True)
 
     def __str__(self):
         return f"{self.marca} {self.modelo} ({self.matricula})"
@@ -135,18 +136,20 @@ class Viaje(models.Model):
     precioTotalTrayecto = models.DecimalField(max_digits=8, decimal_places=2)
     estado = models.CharField(max_length=2, choices=EstadoViaje.choices, default=EstadoViaje.DISPONIBLE)
 
+    def plazasReservadas(self):
+        return self.reservas.count()
+
     def __str__(self):
         return f"Viaje de {self.conductor.username} el {self.fechaSalida.strftime('%Y-%m-%d %H:%M')}"
 
 class Plaza(models.Model):
     viaje = models.ForeignKey(Viaje, on_delete=models.CASCADE, related_name="reservas")
-    pasajero = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="misPlazas")
-    pagado = models.BooleanField(default=False)
-    fechaPago = models.DateTimeField(auto_now_add=True)
+    pasajero = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="trayectos")
+    fechaReserva = models.DateTimeField(auto_now_add=True)
 
 class Comentario(models.Model):
     viaje = models.ForeignKey(Viaje, on_delete=models.CASCADE)
-    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="comentariosHechos")
+    autor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="comentariosRealizados")
     conductor = models.ForeignKey(Usuario, on_delete=models.CASCADE, related_name="comentariosRecibidos")
     puntuacion = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     texto = models.TextField()

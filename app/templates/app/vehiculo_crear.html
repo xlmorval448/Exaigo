@@ -1,0 +1,130 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/vehiculo_crear.css' %}">
+{% endblock %}
+
+{% block header %}
+<nav class="navbar navbar-expand navbar-dark bg-primary shadow-sm">
+    <div class="container-fluid px-4">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'inicio' %}">
+            <img src="{% static 'img/ExaigoLogo.png' %}" alt="Logo Exaigo" class="navbar-logo me-2">
+            <span class="fw-bold tracking-wide">Exaigo</span>
+        </a>
+        <div class="ms-auto">
+            <a href="{% url 'usuario_detalle' user.pk %}" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                <i class="fa-solid fa-xmark me-1"></i> Cancelar
+            </a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block contenido %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-dark py-4 text-center">
+                    <h3 class="text-white fw-bold mb-0">Registrar Vehículo</h3>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label for="{{ form.matricula.id_for_label }}"
+                                    class="form-label fw-bold small text-uppercase text-muted">Matrícula</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i
+                                            class="fa-solid fa-id-card-clip text-primary"></i></span>
+                                    <input type="text" name="matricula" id="{{ form.matricula.id_for_label }}"
+                                        class="form-control border-start-0 custom-input" placeholder="1234ABC" required>
+                                </div>
+                                {% if form.matricula.errors %}
+                                <div class="text-danger small mt-1">{{ form.matricula.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.color.id_for_label }}"
+                                    class="form-label fw-bold small text-uppercase text-muted">Color</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i
+                                            class="fa-solid fa-palette text-primary"></i></span>
+                                    <input type="text" name="color" id="{{ form.color.id_for_label }}"
+                                        class="form-control border-start-0 custom-input" placeholder="Ej: Blanco"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.marca.id_for_label }}"
+                                    class="form-label fw-bold small text-uppercase text-muted">Marca</label>
+                                <input type="text" name="marca" id="{{ form.marca.id_for_label }}"
+                                    class="form-control custom-input" placeholder="Ej: Seat" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.modelo.id_for_label }}"
+                                    class="form-label fw-bold small text-uppercase text-muted">Modelo</label>
+                                <input type="text" name="modelo" id="{{ form.modelo.id_for_label }}"
+                                    class="form-control custom-input" placeholder="Ej: Ibiza" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.anio.id_for_label }}"
+                                    class="form-label fw-bold small text-uppercase text-muted">Año</label>
+                                <input type="number" name="anio" id="{{ form.anio.id_for_label }}"
+                                    class="form-control custom-input" placeholder="2020" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="{{ form.plazasTotales.id_for_label }}"
+                                    class="form-label fw-bold small text-uppercase text-muted">Plazas Totales</label>
+                                <input type="number" name="plazasTotales" id="{{ form.plazasTotales.id_for_label }}"
+                                    class="form-control custom-input" placeholder="5" required>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="{{ form.consumoMedio.id_for_label }}"
+                                    class="form-label fw-bold small text-uppercase text-muted">Consumo Medio
+                                    (L/100km)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i
+                                            class="fa-solid fa-gas-pump text-primary"></i></span>
+                                    <input type="number" step="0.1" name="consumoMedio"
+                                        id="{{ form.consumoMedio.id_for_label }}"
+                                        class="form-control border-start-0 custom-input" placeholder="5.5" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="{{ form.foto.id_for_label }}"
+                                    class="form-label fw-bold small text-uppercase text-muted">Foto del Vehículo</label>
+                                <input type="file" name="foto" id="{{ form.foto.id_for_label }}"
+                                    class="form-control custom-file-input">
+                                <div class="form-text mt-2 small">Sube una foto donde se vea bien el coche.</div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-5">
+                            <button type="submit"
+                                class="btn btn-primary btn-lg rounded-pill fw-bold py-3 shadow-sm transition-all">
+                                <i class="fa-solid fa-car me-2"></i> Registrar
+                            </button>
+                            <a href="{% url 'usuario_detalle' user.pk %}"
+                                class="btn btn-outline-secondary btn-lg rounded-pill fw-bold py-3 shadow-sm transition-all">
+                                <i class="fa-solid fa-xmark me-2"></i> Cancelar y volver
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

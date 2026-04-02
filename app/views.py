@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .models import Usuario, Vehiculo, Evento, Viaje, Plaza, Comentario, Ranking
 from .serializers import UsuarioSerializer, VehiculoSerializer, EventoSerializer, ViajeSerializer, PlazaSerializer, ComentarioSerializer, RankingSerializer
-from .forms import UsuarioForm
+from .forms import UsuarioRegistroForm, UsuarioForm, VehiculoForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 # Create your views here.
@@ -63,7 +63,7 @@ class InicioView(LoginRequiredMixin, ListView):
 class UsuarioCreateView(CreateView):
     template_name = 'app/usuario_crear.html'
     model = Usuario
-    form_class = UsuarioForm
+    form_class = UsuarioRegistroForm
     success_url = reverse_lazy('login')
 
     def form_valid(self, form):
@@ -94,10 +94,24 @@ class UsuarioUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class UsuarioDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Usuario
-    success_url = reverse_lazy('logout')
+    success_url = reverse_lazy('login')
 
     def test_func(self):
         return self.request.user == self.get_object()
+
+    def post(self, request, *args, **kwargs):
+        user = self.get_object()
+        password = request.POST.get('password_confirm')
+
+        if user.check_password(password):
+            messages.success(request, "Cuenta eliminada correctamente.")
+            return super().post(request, *args, **kwargs)
+        else:
+            messages.error(request, "La contraseña introducida es incorrecta.")
+            return redirect('usuario_editar', pk=user.pk)
+
+    def get(self, request, *args, **kwargs):
+        return redirect('usuario_editar', pk=self.kwargs['pk'])
 
     def handle_no_permission(self):
         messages.error(self.request, "No tienes permiso para eliminar este usuario.")
@@ -106,3 +120,48 @@ class UsuarioDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Usuario Eliminado Correctamente.")
         return super().get_success_url()
+
+class VehiculoCreateView(LoginRequiredMixin, CreateView):
+    model = Vehiculo
+    form_class = VehiculoForm
+    template_name = 'app/vehiculo_crear.html'
+
+    def form_valid(self, form):
+        form.instance.usuario = self.request.user
+
+        user = self.request.user
+        user.esConductor = True
+        user.save()
+
+        messages.success(self.request, "Vehículo registrado. Ahora eres conductor.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('usuario_detalle', kwargs={'pk': self.request.user.pk})
+
+class VehiculoDetailView(LoginRequiredMixin, DetailView):
+    model = Vehiculo
+    template_name = 'app/vehiculo_detalle.html'
+    context_object_name = "vehiculo"
+    pk_url_kwarg = 'matricula'
+
+class VehiculoDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Vehiculo
+    template_name = 'app/vehiculo_eliminar.html'
+    pk_url_kwarg = 'matricula'
+
+    def test_func(self):
+        return self.request.user == self.get_object().usuario
+
+    def get(self, request, *args, **kwargs):
+        return redirect('vehiculo_detalle', pk=self.kwargs['pk'], matricula=self.kwargs['matricula'])
+
+    def form_valid(self, form):
+        user = self.request.user
+        user.esConductor = False
+        user.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        messages.success(self.request, "Vehículo eliminado. Ya no eres conductor.")
+        return reverse_lazy('usuario_detalle', kwargs={'pk': self.request.user.pk})

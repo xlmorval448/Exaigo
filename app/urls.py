@@ -28,4 +28,7 @@ urlpatterns += [
     path('usuario/<int:pk>/', views.UsuarioDetailView.as_view(), name='usuario_detalle'),
     path('usuario/<int:pk>/editar/', views.UsuarioUpdateView.as_view(), name='usuario_editar'),
     path('usuario/<int:pk>/borrar/', views.UsuarioDeleteView.as_view(), name='usuario_borrar'),
+    path('usuario/<int:pk>/vehiculo/nuevo/', views.VehiculoCreateView.as_view(), name='vehiculo_crear'),
+    path('usuario/<int:pk>/vehiculo/<str:matricula>/detalle/', views.VehiculoDetailView.as_view(), name='vehiculo_detalle'),
+    path('usuario/<int:pk>/vehiculo/<str:matricula>/eliminar/', views.VehiculoDeleteView.as_view(), name='vehiculo_eliminar'),
 ]
